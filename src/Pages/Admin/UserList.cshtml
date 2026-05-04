@@ -1,0 +1,125 @@
+﻿@page
+@model Kmums.Pages.Admin.UserListModel
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h1>Users</h1>
+
+@if (Model.UserRole !=null)
+{
+    <div class="table-responsive">
+<table class="table table-borderless">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.UserName)
+            </th>
+            <th>
+                @Html.DisplayName("User role")
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.EmailConfirmed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.PasswordHash)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.SecurityStamp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.ConcurrencyStamp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.PhoneNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.PhoneNumberConfirmed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.TwoFactorEnabled)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.LockoutEnd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.LockoutEnabled)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserRole[0].User.AccessFailedCount)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.UserRole) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.UserName)
+            </td>
+             <td class="fst-italic">
+               @Html.DisplayFor(modelItem => item.Roles.NormalizedName)
+                </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Email)
+            </td>
+            
+            <td>
+                @Html.DisplayFor(modelItem => item.User.EmailConfirmed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.PasswordHash)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.SecurityStamp)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.ConcurrencyStamp)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.PhoneNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.PhoneNumberConfirmed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.TwoFactorEnabled)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.LockoutEnd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.LockoutEnabled)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.AccessFailedCount)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.User.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.User.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.User.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</div>
+}
+else{
+    <p>list is empty</p>
+}

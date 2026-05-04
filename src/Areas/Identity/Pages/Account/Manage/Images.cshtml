@@ -1,0 +1,60 @@
+﻿@page
+@model ImagesModel
+@{
+    //ViewData["title"] = "my photos";
+    Html.SetSeoInfo(seoInfo =>
+           {
+       seoInfo.SetCommonInfo(
+           pageTitle: "my photos",
+           description: "KilimanimumsKe, open graph (og:), and ...",
+           url: "https://kilimanimums.ke/photos/",
+           keywordTags: new[] { "kilimanimumsKe", "Kilimanimums", "premium dating", "kenya dating site" } //optional
+       );
+
+       seoInfo.SetImageInfo(
+           url: "https://kilimanimums.ke/images/logo.png",
+           width: 1280,  //optional
+           height: 720,  //optional
+           alt: "KilimanimumsKe"  //optional
+                          //mimeType: "image/jpeg", //optional (detects from url file extension if not set.)
+       );
+           });
+}
+
+<div class="row">
+    <div class="col-md-4">
+        @if(!Model.UserhasProfile){
+<p>to upload photo, please create a public profile first</p>
+}
+else{
+    <form method="post" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label asp-for="Images.FormFile" class="control-label alert-info"></label>
+                <input type="file" accept=".PNG" asp-for="Images.FormFile" class="form-control" required=true />
+                <span asp-validation-for="Images.FormFile" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+            <input asp-page-handler="Imagesend" class="btn btn-outline-info" type="submit" value="Upload" />
+            </div>
+
+        </form>
+}
+        
+        @if (Model.SavedImages.Count>0)
+        {
+            <h4>public photos</h4>
+            foreach (var item in Model.SavedImages)
+            {
+                var base64 = Convert.ToBase64String(item.Image);
+                var Image = String.Format("data:image/png;base64,{0}", base64);
+
+                <div class="albm">
+                <img class="img-fluid" src="@Image" />
+                </div>
+                <hr />
+            }
+        }
+    </div>
+</div>

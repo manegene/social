@@ -1,0 +1,250 @@
+﻿@page
+@using Kmums.Models.User
+@using Microsoft.AspNetCore.Identity
+@using System.Diagnostics
+@inject SignInManager<UserModel> Signin
+@using AspNetCore.ReCaptcha
+
+@model IndexModel
+
+@{
+    // ViewData["Title"] = "KilimanimumsKe";
+    Html.SetSeoInfo(seoInfo =>
+       {
+           seoInfo.SetCommonInfo(
+       pageTitle: "Home page",
+       description: "KilimanimumsKe, open graph (og:), and ...",
+       url: "https://kilimanimums.ke/",
+       keywordTags: new[] { "kilimanimumsKe", "Kilimanimums", "premium dating", "kenya dating site" } //optional
+           );
+
+           seoInfo.SetImageInfo(
+       url: "https://kilimanimums.ke/images/logo.png",
+       width: 1280,  //optional
+       height: 720,  //optional
+       alt: "KilimanimumsKe"  //optional
+                              //mimeType: "image/jpeg", //optional (detects from url file extension if not set.)
+           );
+       });
+
+
+}
+@Html.HiddenFor(model => model.IsSubscribed, new { id = "SubcrpState"})
+
+@if(Model.ResponseMessage != null)
+{
+    <div class="alert alert-success">
+        @Html.Raw(Model.ResponseMessage)
+    </div>
+}
+
+
+@if (Model.Home != null)
+{
+    <div class="text-center">
+        
+        @if(!Signin.IsSignedIn(User)){
+                    <p>@Html.Raw(Model.Home.Body)</p>
+        }
+        else{
+            <p>
+                Find your match and contact them
+            </p>
+        }
+    </div>
+}
+else
+{
+    <div class="text-center">
+        <p>
+            You need an account to access the content of this site
+        </p>
+        <h3 class="fst-italic"> <a asp-page="/Account/Register" asp-area="identity">sign up now</a></h3>
+    </div>
+}
+@if (Signin.IsSignedIn(User))
+{
+    <div class="row justify-content-center">
+
+        <!--display the status meesga eon email send-->
+        @if (TempData["ResponseMessage"] !=null)
+        {
+            <div class="alert alert-success">
+            <partial name="shared/_ShowResponse" for="ResponseMessage" />
+            
+            </div>
+        }
+        <!--show paypal button for logged in users without subscription-->
+        @if (!Model.IsSubscribed)
+        {
+            <script src="https://www.paypal.com/sdk/js?client-id=AevoxD0X-rf2Zi5V1lefpmCwiJyj9x_CzLMIGszuZErVewRz9NQJUKokv1KLyjW1_mqyPG3QFBAWUazY&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
+
+            <!--
+                modal to show some alert warning when user has not paid subscription
+            -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="modal" id="dialog" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <p>Pay one time membership fee of USD 11.00</p>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="smart-button-container">
+                                        @Html.AntiForgeryToken()
+                                        <div style="text-align: center;">
+                                            <div id="paypal-button-container"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        }
+        
+
+
+            <div class="container" id="subscCont">
+
+                <div class="row row-cols-auto g-4">
+                    @foreach (var item in Model.PublicProfiles)
+                    {
+
+                        
+                    <div class="col">
+                                  <div class="card" style="max-width:35rem">
+                                    <div class="card-header text-center">
+                                        
+                                     @item.Profile.Heading
+                                        -
+                                    @item.Category.Name
+                                    
+                                    </div>
+
+                                    <div class="card-body" >
+                                        <h5 class="card-title">
+                                            @Html.AntiForgeryToken()
+                                            <a id="plink" href="#" data-info="@item.Profile.Heading" data-id="@item.Profile.Id">
+
+                                                @if (Model.UImage.Exists(x => x.UserProfile == item.Profile))
+                                                {
+                                                    var img = Model.UImage.Where(x => x.UserProfile == item.Profile && x.User == item.Profile.User).LastOrDefault();
+                                                    var base64 = Convert.ToBase64String(img.Image);
+                                                    var Image = String.Format("data:image/png;base64,{0}", base64);
+                                                    <img src="@Image" height="200" width="200" style="float:right"
+                                             alt="profile image here" />
+                                                }
+
+                                                @if (!Model.UImage.Exists(x => x.UserProfile == item.Profile))
+                                                {
+                                                    <img data-id="@item.Profile.Id" src="images/Logo.png" height="200" width="200" style="float:right"
+                                             alt="profile image here" />
+                                                }
+
+
+                                            </a>
+                                        </h5>
+                                        <a data-bs-toggle="modal" href="#contactModal" data-id="@item.Profile.Id" class="btn btn-info">contact me</a>
+
+                                        <p class="card-text">@Html.Raw(item.Profile.About)</p>
+
+                                    </div>
+
+                                    <!-- Client service provider contact form-->
+                                    <div class="modal fade" id="contactModal" tabindex="-1" role="dialog">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Service provider contact form</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <form id="contact-form" method="post" asp-page-handler="SendEmail">
+                                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                            <input type="hidden" id="receiverid" asp-for="EmailDetails.Receiver" />
+                                                            <div class="form-floating">
+                                                                <input id="sender" type="email" asp-for="EmailDetails.Sender" class="form-control" required />
+                                                                <label asp-for="EmailDetails.Sender" class="form-label"></label>
+                                                                <span asp-validation-for="EmailDetails.Sender" class="text-danger"></span>
+                                                            </div>
+                                                            <div class="form-floating">
+                                                                <input id="subject" maxlength="25" type="text" asp-for="EmailDetails.Title" class="form-control" required />
+                                                                <label asp-for="EmailDetails.Title" class="form-label"></label>
+                                                                <span asp-validation-for="EmailDetails.Title" class="text-danger"></span>
+                                                            </div>
+                                                            <div class="form-floating">
+                                                                <textarea id="usertext" minlength="10" maxlength="800" asp-for="EmailDetails.Body" class="form-control" required></textarea>
+                                                                <label asp-for="EmailDetails.Body" class="form-label"></label>
+                                                                <span asp-validation-for="EmailDetails.Body" class="text-danger"></span>
+                                                            </div>
+                                                    @Html.ReCaptcha()
+
+                                                            <div class="modal-footer">
+                                                                <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">dismiss</button>
+                                                                <button id="sendnow" type="submit" class="btn btn-primary">Send now</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                   </div>
+                    </div>
+                    
+                }
+                    </div>
+
+                </div>
+               
+
+            <!--photo gallery in a modal popup-->
+              <div class="modal fade" id="imageModal"  role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="ModalLabel">more photos</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+                            <input type="hidden" asp-for="ProfId" id="itemvalue" />
+
+                            <div id="carousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
+                                <!-- Indicators -->
+                                <ol class="carousel-indicators"></ol>
+                                <!-- Wrapper for slides -->
+                                <div class="carousel-inner"></div>
+                                <!-- Controls -->
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+    </div>
+
+}
+
+
+
+
+
+

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11709.299
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kmums", "Kmums.csproj", "{374A55D4-CECF-4D43-A34C-9FEEE05416E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kmum.test", "..\tests\kmum.test\kmum.test.csproj", "{CA517276-D465-5552-548C-9A4E3D17125A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{374A55D4-CECF-4D43-A34C-9FEEE05416E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{374A55D4-CECF-4D43-A34C-9FEEE05416E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{374A55D4-CECF-4D43-A34C-9FEEE05416E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{374A55D4-CECF-4D43-A34C-9FEEE05416E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA517276-D465-5552-548C-9A4E3D17125A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA517276-D465-5552-548C-9A4E3D17125A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA517276-D465-5552-548C-9A4E3D17125A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA517276-D465-5552-548C-9A4E3D17125A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C65BFFFB-59F7-4D39-8CE1-7156FBED7A84}
+	EndGlobalSection
+EndGlobal

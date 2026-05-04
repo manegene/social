@@ -1,0 +1,39 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  padding-top:150px;
+  padding-bottom:150px;
+  background-color:rebeccapurple;
+  background-image:url(../Images/Theme/125.jpg);
+ 
+.footer,.header{
+    
+    background-color:white;
+}
+.main {
+    background-color: aliceblue;
+}
+
+.albm {
+    overflow: hidden;
+    margin: 0 auto;
+}
+.albm img {
+        transition: 0.5s all ease-in-out;
+    }
+.albm:hover img {
+        transform: scale(1.5);
+    }

@@ -1,0 +1,26 @@
+﻿@page "/privacy"
+@model PrivacyPageModel
+@{
+    //ViewData["Title"] = "Privacy Policy";
+    Html.SetSeoInfo(seoInfo =>
+           {
+       seoInfo.SetCommonInfo(
+           pageTitle: "privacy page",
+           description: "KilimanimumsKe, open graph (og:), and ...",
+           url: "https://kilimanimums.ke/privacy/",
+           keywordTags: new[] { "kilimanimumsKe", "Kilimanimums", "premium dating", "kenya dating site" } //optional
+       );
+
+       seoInfo.SetImageInfo(
+           url: "https://kilimanimums.ke/images/logo.png",
+           width: 1280,  //optional
+           height: 720,  //optional
+           alt: "KilimanimumsKe"  //optional
+                          //mimeType: "image/jpeg", //optional (detects from url file extension if not set.)
+       );
+           });
+}
+<h1>@ViewData["Title"]</h1>
+@if(Model.PrivacyUsModel !=null){
+    <p>@Html.Raw(Model.PrivacyUsModel.Body)</p>
+}

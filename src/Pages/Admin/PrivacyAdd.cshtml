@@ -1,0 +1,37 @@
+﻿@page
+@model Kmums.Pages.Admin.PrivacyAddModel
+
+@{
+    ViewData["Title"] = "PrivacyAdd";
+}
+
+<h1>Add add privacy information</h1>
+@if (!Model.CheckModel)
+{
+    <h4>Privacy</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="PrivacyModel.Body" class="control-label"></label>
+                    <textarea id="smarttext" asp-for="PrivacyModel.Body" class="form-control" rows="10"></textarea>
+                    <span asp-validation-for="PrivacyModel.Body" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-page="Index">Back to List</a>
+    </div>
+}
+<h2>Only edits are allowed</h2>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

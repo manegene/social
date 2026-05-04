@@ -1,0 +1,64 @@
+﻿@page
+@model SentChatModel
+@{
+   // ViewData["title"] = "sent messages";
+    Html.SetSeoInfo(seoInfo =>
+        {
+            seoInfo.SetCommonInfo(
+        pageTitle: "sent mails",
+        description: "KilimanimumsKe, open graph (og:), and ...",
+        url: "https://kilimanimums.ke/sent-mails",
+        keywordTags: new[] { "kilimanimumsKe", "Kilimanimums", "premium dating", "kenya dating site" } //optional
+    );
+
+            seoInfo.SetImageInfo(
+        url: "https://kilimanimums.ke/images/logo.png",
+        width: 1280,  //optional
+        height: 720,  //optional
+        alt: "KilimanimumsKe"  //optional
+                               //mimeType: "image/jpeg", //optional (detects from url file extension if not set.)
+    );
+        });
+}
+
+@if (Model.Messages.Count()>0)
+{
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    subject
+                </th>
+                <th>
+                    message
+                </th>
+                <th>
+                    date
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Messages)
+            {
+                <tr>
+                    <td>
+                        @Html.Raw(item.Title)
+                    </td>
+                    <td>
+                        @Html.Raw(item.Body)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(d=>item.Sent)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+}
+else
+{
+    <div class="alert-info">
+        <p >your message replies will appear here</p>
+    </div>
+}

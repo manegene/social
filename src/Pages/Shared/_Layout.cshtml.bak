@@ -1,0 +1,386 @@
+﻿@using Kmums.Models.User
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<UserModel> SignIn
+@inject UserManager<UserModel> Usermanager
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Kmums</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="~/Images/Icon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/Images/Icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/Images/Icon/favicon-16x16.png">
+    <link rel="manifest" href="~/Images/Icon/site.webmanifest">
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Kmums.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar header fixed-top navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3 navbar-light bg-light">
+            <div class="container-fluid">
+                <div class="navbar-brand">
+                    <img src="~/Images/Logo.png" width="80" height="60" style="object-fit:contain"/>
+                </div>
+                <a class="navbar-brand" asp-area="" asp-page="/Index">KilimanimumsKe</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon" ></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-column flex-sm-row flex-grow-1 ">
+                        @if (SignIn.IsSignedIn(User) && User.IsInRole("admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <button class="btn  dropdown-toggle"
+                                    type="button" id="dropdownMenuButton" data-toggle="dropdown" data-bs-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    Home
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" asp-area="" asp-page="/Admin/HomeCreate">New Home</a>
+                                    <a class="dropdown-item" asp-area="" asp-page="/Admin/HomeEdit">Update Home</a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <button class="btn  dropdown-toggle"
+                                    type="button" id="dropdownMenuButton" data-toggle="dropdown" data-bs-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    Roles
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" asp-area="" asp-page="/Admin/UserList">users</a>
+                                    <a class="dropdown-item" asp-area="" asp-page="/Admin/AddRole">Add roles</a>
+                                    <a class="dropdown-item" asp-area="" asp-page="/Admin/ListRoles">List roles</a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <div class="dropdown">
+                                    <button class="btn dropdown-toggle"
+                                        type="button" id="dropdownMenuButton" data-toggle="dropdown" data-bs-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">
+                                        Site
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <li><a class="dropdown-item" asp-area="" asp-page="/Admin/AboutAdd">Add About</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-page="/Admin/AboutEdit">Edit About</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-page="/Admin/PrivacyAdd">Add Privacy</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-page="/Admin/PrivacyEdit">Edit Privacy</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <div class="dropdown">
+                                    <button class="btn dropdown-toggle"
+                                        type="button" id="dropdownMenuButton" data-toggle="dropdown" data-bs-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">
+                                        Category
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <li><a class="dropdown-item" asp-area="" asp-page="/Admin/CategoryCreate">Add Category</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-page="/Admin/CategoryEdit">Edit Category</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-page="/Admin/CategoryView">View Categories</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        }
+                         
+                    </ul>
+
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container main">
+        <main role="main" class="pb-3" >
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="fixed-bottom" style="background-color:white">
+        <div class="container">
+            <div class="text-center p-3" >
+                &copy; @DateTime.Now.Year - KilimanimumsKe
+                <a class="btn btn-primary btn-floating m-1" asp-area="" asp-page="/PrivacyPage">Privacy</a>
+                <a class="btn btn-primary btn-floating m-1" asp-area="" asp-page="/About">About </a>
+                <a class="btn btn-info btn-floating m-1" href="https://cdn.forms-content.sg-form.com/39675bd5-ab6a-11ed-90d4-aa5884ecfa2e" >manage subscription</a>
+
+            </div>
+
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AaY8yJAXvvvDhUjBb5Ysnn9nwvKRw9489KqN8xeJ_6ZORwf6w91gGf8g4EcGsPnFn_l-PBNwReTWsdOD&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
+
+    <!-- Google analytics tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-082Y4R7GNB"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-082Y4R7GNB');
+    </script>
+
+    <script>
+        //assign id and message title for the reply message
+        $('#ReplyModal').on('show.bs.modal',function (e) {
+            var msgId = $(e.relatedTarget).data('id');
+            var msgTitle = $(e.relatedTarget).data('title');
+
+            //assign the values to modal fields
+            $('#msgid').val(msgId);
+            $('#replymodaltitle').html(msgTitle);
+
+        });
+
+        //id for user to be contacted
+        $('#contactModal').on('show.bs.modal', function (e) {
+            var msgId = $(e.relatedTarget).data('id');
+           
+
+            //assign the values to modal id
+            $('#receiverid').val(msgId);
+        });
+
+        //send user email function
+        $('#sendnow').on('click', function (func) {
+            func.preventDefault();
+
+            tinyMCE.triggerSave();
+
+            //form field values
+            var receiverId = $('#receiverid').val();
+
+            //check that userid is captured and not empty
+            if(receiverId.length>0){
+                
+                //check none of the fields is empty. ie, valdate the whole form
+               $('#contact-form').validate({
+                   ignore: "",
+                    validClass: "success",
+
+                    errorElement: "div",
+                    errorPlacement: function (error, element) {
+                        error.addClass("invalid-feedback"),
+                        error.insertAfter(element);
+                    },
+                    highlight: function (element) {
+                        $(element).removeClass('is-valid').addClass('is-invalid');
+                    },
+                    unhighlight: function (element) {
+                        $(element).removeClass('is-invalid').addClass('is-valid');
+                    },
+                            
+                });
+                
+                //check form is validated and recaptha is checked.trigger submit and disable submit form to avoid duplicate messaging
+                if ($('#contact-form').valid() && grecaptcha.getResponse() != "") {
+
+                    $('#contact-form').submit();
+                    $(':input[type="submit"]').prop('disabled', true);
+
+                }
+                else {
+                    alert("message not sent.either input field(s) are empty or recaptha not checked")
+                }
+                
+
+            }
+            else{
+                alert('user is unknown');
+            }
+            
+        });
+
+        //get deatils of user in the images modal in index page
+        $('#plink ').on('click', function (e) {
+
+            var msg2=$(this).attr("data-id");
+            var title = $(this).attr("data-info")
+            if(msg2>0)
+          {
+                var newurl = '/Index?handler=SelectedUser&profileId=' + encodeURIComponent(msg2);
+
+            $.ajax({
+                type:'GET',
+                url:newurl,
+                datatype:'json',
+                success: function (result) {
+                          var jsonObject = JSON.parse(result);
+
+                          //console.log(jsonObject.length);
+
+                       if(jsonObject.length>0)
+                       {
+                           $(imageModal).modal('show');
+
+                           console.log(result);
+                            $('ModalLabel').val(title);
+                            $('itemvalue').val(msg2);
+                           console.log("successfully gotten"+title);
+
+                            //var jsonObject = JSON.parse(result);
+                            //$('#ptext').attr("src", "data:image/png;base64," + jsonObject[0].Image);
+
+                            for(var j=0;j<jsonObject.length;j++)
+                            {
+                                $('<div class="carousel-item"><img class="d-inline-block w-100" src="data:image/png;base64,' + jsonObject[j].Image + '">   </div>"').appendTo('.carousel-inner');
+                                    $('<li data-bs-target="#carousel" data-bs-slide-to=' + j + '></li>').appendTo('.carousel-indicators');
+
+                                $('.carousel-item').first().addClass('active');
+                                $('.carousel-indicators > li').first().addClass('active');
+                                $('#carousel').carousel();
+                            }
+                            
+                            
+                       }
+                       else{
+                                alert('user has not added images');
+                                            //location.reload();
+
+
+                            }
+                        //alert(append_image);
+                    //alert('we just refreshed'+result[0].value);
+                    //console.log(result[0]);
+                },
+                complete:function(){
+
+                       // $('modal').empty();
+                       // window.location.href="/Index";
+
+                },
+                
+            });
+          }
+          else{
+              alert('user object not valid');
+          }
+        });
+
+        //title and id of the user photos being viewed
+        $('#imageModal').on('show.bs.modal', function (e) {
+            var profId = $(e.relatedTarget).data('id');
+            var proftitle = $(e.relatedTarget).data('info');
+
+
+            //assign the values to modal id and title
+            $('#itemvalue').val(profId);
+            $('#ModalLabel').val(proftitle);
+
+        });
+
+        //reload page on image modal close
+        $('#imageModal').on('hidden.bs.modal', function () {
+            location.reload();
+        });
+
+        /*initialize tinymce rich text editor for admin text fields
+        smarttext is text area fields ids.
+        All text areas have the same id and are bound to tinymce editor
+        */
+        tinymce.init({
+            height:500,
+            selector: '#smarttext',
+            promotion: false,
+            branding: false,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link','charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | blocks | bold italic backcolor | ' +
+                'alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist outdent indent | removeformat | help'
+        });
+
+                /*initialize tinymce rich text editor for user text fields*/
+        tinymce.init({
+            height: 300,
+            selector: '#usertext',
+            promotion: false,
+            branding: false,
+            menubar:false,
+            toolbar_location: "bottom",
+
+            plugins: [
+                'advlist', 'autolink', 'lists', 'charmap', 'preview',
+                'searchreplace', 'visualblocks', 'fullscreen',
+                'insertdatetime','table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | blocks | bold italic backcolor | ' +
+                'alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist outdent indent | removeformat | help'
+        });
+
+        //paypal integration
+        function initPayPalButton() {
+            paypal.Buttons({
+                style: {
+                    shape: 'pill',
+                    color: 'gold',
+                    layout: 'vertical',
+                    label: 'paypal',
+
+                },
+
+                createOrder: function (data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{ "description": "pay now", "amount": { "currency_code": "USD", "value": 11.16, "breakdown": { "item_total": { "currency_code": "USD", "value": 11 }, "shipping": { "currency_code": "USD", "value": 0 }, "tax_total": { "currency_code": "USD", "value": 0.16 } } } }]
+                    });
+                },
+
+                onApprove: function (data, actions) {
+                    return actions.order.capture().then(function (orderData) {
+
+                        // Full available details
+                        //console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                        //console.log("simplified:",orderData.intent);
+                        var updateUrl = '/Index/handler=UpdateSubscription';
+                        var payresponse = JSON.stringify(orderData);
+                        $.ajax({
+                            type: "POST",
+                            url: updateUrl,
+                            data: {TransactionID:orderData.intent, JsonData:payresponse},
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (data) 
+                            { alert(data); },
+                            error: function (errMsg) {
+                                alert(errMsg);
+                            }
+                        });
+
+                        // Show a success message within this page, e.g.
+                        const element = document.getElementById('paypal-button-container');
+                        element.innerHTML = '';
+                        element.innerHTML = '<h3>Thank you for your payment!</h3>';
+
+                        // Or go to another URL:  actions.redirect('thank_you.html');
+
+                    });
+                },
+
+                onError: function (err) {
+                    console.log(err);
+                }
+            }).render('#paypal-button-container');
+        }
+        initPayPalButton();
+
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

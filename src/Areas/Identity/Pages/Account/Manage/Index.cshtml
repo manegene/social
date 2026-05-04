@@ -1,0 +1,83 @@
+﻿@page
+@model IndexModel
+@{
+    //ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+    Html.SetSeoInfo(seoInfo =>
+           {
+               seoInfo.SetCommonInfo(
+           pageTitle: "profile",
+           description: "KilimanimumsKe, open graph (og:), and ...",
+           url: "https://kilimanimums.ke/public-profile",
+           keywordTags: new[] { "kilimanimumsKe", "Kilimanimums", "premium dating", "kenya dating site" } //optional
+       );
+
+               seoInfo.SetImageInfo(
+           url: "https://kilimanimums.ke/images/logo.png",
+           width: 1280,  //optional
+           height: 720,  //optional
+           alt: "KilimanimumsKe"  //optional
+                                  //mimeType: "image/jpeg", //optional (detects from url file extension if not set.)
+       );
+    });
+}
+
+<h3>@ViewData["Title"]
+    @if(!string.IsNullOrEmpty(Model.ProfileUpdated)){
+        <label> is up to date </label>
+    }
+</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-floating">
+                <input asp-for="Username" class="form-control" disabled />
+                <label asp-for="Username" class="form-label"></label>
+            </div>
+
+            <div class="form-floating">
+                <div class="form-check">
+                    <label asp-for="Input.Gender" class="form-check-label"></label>
+                </div>
+            <div class="form-check">
+                    <input type="radio" value="male" asp-for="Input.Gender" class="form-check-input" disabled=@Model.ProfileUpdated />
+                <label asp-for="Input.Gender" class="form-check-label">male</label>
+                </div>
+
+                <div class="form-check">
+                    <input type="radio" value="female" asp-for="Input.Gender" class="form-check-input" disabled=@Model.ProfileUpdated />
+                <label asp-for="Input.Gender" class="form-check-label">female</label>
+                </div>
+
+                <div class="form-check">
+                    <input type="radio" value="non-binary" asp-for="Input.Gender" class="form-check-input" disabled=@Model.ProfileUpdated />
+                <label asp-for="Input.Gender" class="form-check-label">non-binary</label>
+            </div>
+                <span asp-validation-for="Input.Gender" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating">
+                <input asp-for="Input.FirstName" class="form-control" disabled=@Model.ProfileUpdated />
+                <label asp-for="Input.FirstName" class="form-label"></label>
+                <span asp-validation-for="Input.FirstName" class="text-danger" ></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.LastName" class="form-control" disabled=@Model.ProfileUpdated />
+                <label asp-for="Input.LastName" class="form-label"></label>
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.PhoneNumber" class="form-control" disabled=@Model.ProfileUpdated />
+                <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
