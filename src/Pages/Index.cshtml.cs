@@ -17,16 +17,21 @@ namespace Kmums.Pages
 {
     [ValidateReCaptcha]
     [AllowAnonymous]
-    public class IndexModel(ILogger<IndexModel> logger, DataContext dataContext, IEmailSender emailSender, UserManager<UserModel> userManager) : PageModel
+    public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger = logger;
-        private readonly DataContext _dataContext = dataContext;
-        private readonly IEmailSender _emailSender = emailSender;
-        private readonly UserManager<UserModel> _userManager = userManager;
+        private readonly ILogger<IndexModel> _logger;
+        private readonly DataContext _dataContext;
+        private readonly IEmailSender _emailSender;
+        private readonly UserManager<UserModel> _userManager;
 
-        private const int MAX_BODY_LENGTH = 5000;
-        private const int MAX_JSON_LENGTH = 10000;
 
+        public IndexModel(ILogger<IndexModel> logger, DataContext dataContext, IEmailSender emailSender, UserManager<UserModel> userManager)
+        {
+            _logger = logger;
+            _dataContext = dataContext;
+            _emailSender = emailSender;
+            _userManager = userManager;
+        }
         public HomeModel Home { get; set; }
         public List<UserPublicModel> Users { get; set; }
         public List<CategoryModel> Categories { get; set; }
@@ -95,19 +100,7 @@ namespace Kmums.Pages
             {
                 throw new InvalidOperationException("operation not allowed");
             }
-
-            UserModel user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized();
-
-            bool ownsProfile = await _dataContext.PublicProfile
-                .AnyAsync(p => p.Id == profileId && p.User == user);
-
-            if (!ownsProfile)
-                return Forbid();
-
             SelectedUserImages = await _dataContext.Images.Where(id => id.UserProfile.Id == profileId).ToListAsync();
-
 
             return new JsonResult(SelectedUserImages.ToJson());
         }
@@ -115,68 +108,43 @@ namespace Kmums.Pages
         public async Task<IActionResult> OnPostSendEmail()
 
         {
-            if (EmailDetails == null)
-                return BadRequest();
 
-            if (!int.TryParse(EmailDetails.Receiver, out int receiverId))
-                return BadRequest("Invalid receiver");
+            //get user by using the public profile id 
+            UserModel destinationuser = await _dataContext.PublicProfile.Where(profid => profid.Id == Convert.ToInt32(EmailDetails.Receiver)).Select(usr => usr.User).FirstOrDefaultAsync();
 
-            if (string.IsNullOrWhiteSpace(EmailDetails.Body) ||
-                EmailDetails.Body.Length > MAX_BODY_LENGTH)
-                return BadRequest("Invalid message body");
+            //now retrieve the receiver email address
+            EmailDetails.Receiver = await _dataContext.Users.Where(uid => uid == destinationuser).Select(uemail => uemail.Email).FirstOrDefaultAsync();
 
-            UserModel senderUser = await _userManager.GetUserAsync(User);
-            if (senderUser == null)
-                return Unauthorized();
+            await _emailSender.SendEmailAsync(EmailDetails.Receiver, EmailDetails.Title, EmailDetails.Body);
 
-            string senderEmail = senderUser.Email;
+            //send acknowledgement message to sender
+            string senderReponse = "Your message was sent successfully";
+            await _emailSender.SendEmailAsync(EmailDetails.Sender, EmailDetails.Title, senderReponse);
 
-            UserModel destinationUser = await _dataContext.PublicProfile
-                .Where(p => p.Id == receiverId)
-                .Select(p => p.User)
-                .FirstOrDefaultAsync();
-
-            if (destinationUser == null)
-                return NotFound("Receiver not found");
-
-            string receiverEmail = await _dataContext.Users
-                .Where(u => u == destinationUser)
-                .Select(u => u.Email)
-                .FirstOrDefaultAsync();
-
-            await _emailSender.SendEmailAsync(receiverEmail, EmailDetails.Title, EmailDetails.Body);
-
-            await _emailSender.SendEmailAsync(senderEmail, EmailDetails.Title, "Your message was sent successfully");
+            //lastly
+            //update sender email address for the just sent email
+            ContactModel CurrMsg = await _dataContext.ContactQueue.
+                Where(em => (em.Receiver == EmailDetails.Receiver) && (em.Title == EmailDetails.Title) && (em.Body == EmailDetails.Body)).
+                FirstOrDefaultAsync();
+            if (CurrMsg != null)
+            {
+                CurrMsg.Sender = EmailDetails.Sender;
+                await _dataContext.SaveChangesAsync();
+            }
 
             ResponseMessage = "email message sent successfully";
             return RedirectToPage();
         }
 
+        //update user subscription
         public async Task<ActionResult> OnPostUpdateSubscriptionAsync(string TransactionID, string JsonData)
         {
-            if (string.IsNullOrWhiteSpace(TransactionID))
-                return new JsonResult("error: operation not allowed");
-
-            if (!string.IsNullOrEmpty(JsonData) && JsonData.Length > MAX_JSON_LENGTH)
-                return new JsonResult("error: payload too large");
 
             UserModel user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized();
 
-            UserPublicModel publicUser = await _dataContext.PublicProfile
-                .FirstOrDefaultAsync(p => p.User == user);
+            UserPublicModel publicUser = await _dataContext.PublicProfile.Where(puid => puid.User == user).FirstOrDefaultAsync();
 
-            if (publicUser == null)
-                return NotFound("unknown user profile");
-
-            bool exists = await _dataContext.Subscriptions
-                .AnyAsync(s => s.TransId == TransactionID);
-
-            if (exists)
-                return new JsonResult("duplicate transaction");
-
-            Subscription subscription = new Subscription
+            Subscription subscription = new()
             {
                 SubStaDate = DateTime.UtcNow.ToString(),
                 SubEndDate = DateTime.UtcNow.AddYears(1).ToString(),
@@ -188,13 +156,12 @@ namespace Kmums.Pages
             };
 
             await _dataContext.AddAsync(subscription);
+            Task<int> posted = _dataContext.SaveChangesAsync();
 
-            int result = await _dataContext.SaveChangesAsync();
-
-            if (result <= 0)
+            if (posted.Result <= 0)
                 return new JsonResult("user error: Error saving the values");
 
-            return new JsonResult("subscription update successful");
+            return new JsonResult("subscriptin update successful");
         }
     }
 }

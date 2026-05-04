@@ -39,9 +39,6 @@ namespace Kmums.Pages.Admin
                 Id = Input.ParentCategoryId
             };
 
-            if (entity.Id != 0)
-                return Page();
-
             _context.Category.Add(entity);
             await _context.SaveChangesAsync();
 
