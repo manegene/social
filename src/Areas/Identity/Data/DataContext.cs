@@ -5,7 +5,6 @@ using Kmums.Models.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Kmums.Models.LinkedModels;
 
 namespace Kmums.Areas.Identity.Data;
 

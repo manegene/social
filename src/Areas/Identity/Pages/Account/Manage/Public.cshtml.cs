@@ -22,9 +22,9 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
         public async Task<IActionResult> OnGetAsync()
         {
             UserModel Loggedin = await _userManager.GetUserAsync(User);
-           
+
             UserPublicModel = _context.PublicProfile.Where(user => user.User == Loggedin).FirstOrDefault();
-            Categories = _context.Category.Where(pcat=>pcat.ParentId>0).ToList();
+            Categories = _context.Category.Where(pcat => pcat.ParentId > 0).ToList();
 
             return Page();
         }
@@ -32,7 +32,7 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
         [BindProperty]
         public UserPublicModel UserPublicModel { get; set; }
 
-       
+
 
         //  public UserCategoryMappingModel UserCategory { get; set; }
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD

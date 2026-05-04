@@ -25,14 +25,14 @@ namespace Kmums.CustomServices
             {
                 throw new Exception("Null SendGridKey");
             }
-           await Execute(EmailAuthOption.SendgridKey, subject, htmlMessage, email);
+            await Execute(EmailAuthOption.SendgridKey, subject, htmlMessage, email);
         }
         public async Task Execute(string apiKey, string subject, string message, string toEmail)
         {
             SendGridClient client = new(apiKey);
             SendGridMessage msg = new()
             {
-                From = new EmailAddress("no-reply@kilimanimums.ke","KilimanimumsKe"),
+                From = new EmailAddress("no-reply@kilimanimums.ke", "KilimanimumsKe"),
                 //ReplyTo = new EmailAddress("info@kilimanimums.ke", "KilimanimumsKe"),
                 Subject = subject,
                 PlainTextContent = message,
@@ -40,16 +40,16 @@ namespace Kmums.CustomServices
             };
             msg.AddTo(new EmailAddress(toEmail, "KilimanimumsKe"));
 
-            
+
 
             //save sent email to database
             ContactModel Savemsg = new()
             {
-                Sender=msg.From.Email,
-                Receiver=toEmail,
-                Title=msg.Subject,
-                Body=message,
-                Sent=DateTime.Now.ToString()
+                Sender = msg.From.Email,
+                Receiver = toEmail,
+                Title = msg.Subject,
+                Body = message,
+                Sent = DateTime.Now.ToString()
             };
             await _Dcontext.AddAsync(Savemsg);
             await _Dcontext.SaveChangesAsync();

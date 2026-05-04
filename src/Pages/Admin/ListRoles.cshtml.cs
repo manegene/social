@@ -1,7 +1,5 @@
 ﻿using Kmums.Models.Amin;
 using Kmums.Models.User;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace Kmums.Pages.Admin

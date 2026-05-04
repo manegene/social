@@ -1,9 +1,7 @@
 ﻿using Kmums.Areas.Identity.Data;
 using Kmums.Models.Amin;
 using Kmums.Models.User;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Build.Framework;
 
 namespace Kmums.Pages.Admin

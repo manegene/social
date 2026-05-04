@@ -4,10 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.IdentityModel.Tokens;
-using System.IO.Compression;
-using System.Linq;
 
 namespace Kmums.Areas.Identity.Pages.Account.Manage
 {
@@ -15,7 +11,7 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
     {
         private readonly DataContext _dataContext;
         private readonly UserManager<UserModel> _userManager;
-        public ImagesModel(DataContext dataContext,UserManager<UserModel> userManager)
+        public ImagesModel(DataContext dataContext, UserManager<UserModel> userManager)
         {
             _dataContext = dataContext;
             _userManager = userManager;
@@ -30,10 +26,10 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
 
         public async Task<ActionResult> OnGet()
         {
-            var user= await _userManager.GetUserAsync(User);
+            UserModel user = await _userManager.GetUserAsync(User);
 
             SavedImages = await _dataContext.Images.Where(us => us.User == user).ToListAsync();
-            UserhasProfile =  _dataContext.PublicProfile.Any(us=>us.User==user);
+            UserhasProfile = _dataContext.PublicProfile.Any(us => us.User == user);
 
             return Page();
         }
@@ -48,7 +44,7 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
                 return BadRequest(ModelState);
             }
             //get the uploaded file name to validate the extension
-            var ext = Path.GetExtension(Images.FormFile.FileName).ToLowerInvariant();
+            string ext = Path.GetExtension(Images.FormFile.FileName).ToLowerInvariant();
 
             //if file extension is not in the list,stop further file processing
             if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
@@ -57,21 +53,21 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
             }
 
             //get the logged on user
-            var user = await _userManager.GetUserAsync(User);
-            var userprofile = await _dataContext.PublicProfile.Where(us => us.User == user).FirstOrDefaultAsync();
+            UserModel user = await _userManager.GetUserAsync(User);
+            UserPublicModel userprofile = await _dataContext.PublicProfile.Where(us => us.User == user).FirstOrDefaultAsync();
             //process image now that its a verified file format
-            using (var memoryStream = new MemoryStream())
+            using (MemoryStream memoryStream = new MemoryStream())
             {
                 await Images.FormFile.CopyToAsync(memoryStream);
 
                 // Upload the file if less than 2 MB
                 if (memoryStream.Length < 2097152)
                 {
-                    var file = new UserImageModel()
+                    UserImageModel file = new UserImageModel()
                     {
                         Image = memoryStream.ToArray(),
                         User = user,
-                        UserProfile=userprofile
+                        UserProfile = userprofile
 
                     };
                     _dataContext.Images.Add(file);

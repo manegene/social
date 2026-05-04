@@ -12,12 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol;
-using SendGrid;
-using SendGrid.Helpers.Mail;
-using System.Configuration;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace Kmums.Pages
 {
@@ -51,7 +45,7 @@ namespace Kmums.Pages
 
         public UserModel LoggedIn { get; set; }
         public bool IsSubscribed { get; set; }
-        
+
         [TempData]
         public string ResponseMessage { get; set; }
         public async Task<ActionResult> OnGet()
@@ -59,7 +53,6 @@ namespace Kmums.Pages
             try
             {
 
-                // ResponseMessage = "okli";
                 LoggedIn = await _userManager.GetUserAsync(User);
                 if (LoggedIn != null)
                 {
@@ -67,7 +60,7 @@ namespace Kmums.Pages
                 }
                 ;
                 //public user profiles
-                PublicProfiles = [.. (from UserPublicModel upm in _dataContext.PublicProfile
+                PublicProfiles = [.. from UserPublicModel upm in _dataContext.PublicProfile
                          join CategoryModel cm in _dataContext.Category
                          on upm.CategoryId equals cm.Id
                          select new PublicProfile_Category
@@ -75,7 +68,7 @@ namespace Kmums.Pages
                              Profile=upm,
                              Category=cm
 
-                         })];
+                         }];
 
 
                 //get site home information
@@ -98,16 +91,16 @@ namespace Kmums.Pages
         //get user specific photos
         public async Task<ActionResult> OnGetSelectedUserAsync(int profileId)
         {
-            if(profileId <= 0)
+            if (profileId <= 0)
             {
                 throw new InvalidOperationException("operation not allowed");
             }
 
-            var user = await _userManager.GetUserAsync(User);
+            UserModel user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
 
-            var ownsProfile = await _dataContext.PublicProfile
+            bool ownsProfile = await _dataContext.PublicProfile
                 .AnyAsync(p => p.Id == profileId && p.User == user);
 
             if (!ownsProfile)
@@ -132,13 +125,13 @@ namespace Kmums.Pages
                 EmailDetails.Body.Length > MAX_BODY_LENGTH)
                 return BadRequest("Invalid message body");
 
-            var senderUser = await _userManager.GetUserAsync(User);
+            UserModel senderUser = await _userManager.GetUserAsync(User);
             if (senderUser == null)
                 return Unauthorized();
 
-            var senderEmail = senderUser.Email;
+            string senderEmail = senderUser.Email;
 
-            var destinationUser = await _dataContext.PublicProfile
+            UserModel destinationUser = await _dataContext.PublicProfile
                 .Where(p => p.Id == receiverId)
                 .Select(p => p.User)
                 .FirstOrDefaultAsync();
@@ -146,7 +139,7 @@ namespace Kmums.Pages
             if (destinationUser == null)
                 return NotFound("Receiver not found");
 
-            var receiverEmail = await _dataContext.Users
+            string receiverEmail = await _dataContext.Users
                 .Where(u => u == destinationUser)
                 .Select(u => u.Email)
                 .FirstOrDefaultAsync();
@@ -159,7 +152,7 @@ namespace Kmums.Pages
             return RedirectToPage();
         }
 
-        public async Task<ActionResult> OnPostUpdateSubscriptionAsync(string TransactionID,string JsonData)
+        public async Task<ActionResult> OnPostUpdateSubscriptionAsync(string TransactionID, string JsonData)
         {
             if (string.IsNullOrWhiteSpace(TransactionID))
                 return new JsonResult("error: operation not allowed");
@@ -167,23 +160,23 @@ namespace Kmums.Pages
             if (!string.IsNullOrEmpty(JsonData) && JsonData.Length > MAX_JSON_LENGTH)
                 return new JsonResult("error: payload too large");
 
-            var user = await _userManager.GetUserAsync(User);
+            UserModel user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
 
-            var publicUser = await _dataContext.PublicProfile
+            UserPublicModel publicUser = await _dataContext.PublicProfile
                 .FirstOrDefaultAsync(p => p.User == user);
 
             if (publicUser == null)
                 return NotFound("unknown user profile");
 
-            var exists = await _dataContext.Subscriptions
+            bool exists = await _dataContext.Subscriptions
                 .AnyAsync(s => s.TransId == TransactionID);
 
             if (exists)
                 return new JsonResult("duplicate transaction");
 
-            var subscription = new Subscription
+            Subscription subscription = new Subscription
             {
                 SubStaDate = DateTime.UtcNow.ToString(),
                 SubEndDate = DateTime.UtcNow.AddYears(1).ToString(),
@@ -196,7 +189,7 @@ namespace Kmums.Pages
 
             await _dataContext.AddAsync(subscription);
 
-            var result = await _dataContext.SaveChangesAsync(); 
+            int result = await _dataContext.SaveChangesAsync();
 
             if (result <= 0)
                 return new JsonResult("user error: Error saving the values");

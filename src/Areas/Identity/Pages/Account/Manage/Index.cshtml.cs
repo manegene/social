@@ -84,16 +84,16 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
             string phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
             Username = userName;
-            if(!string.IsNullOrEmpty(user.FirstName))
+            if (!string.IsNullOrEmpty(user.FirstName))
             {
-                 ProfileUpdated = "disabled";
+                ProfileUpdated = "disabled";
             }
             Input = new InputModel
             {
                 PhoneNumber = phoneNumber,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Gender=user.Gender
+                Gender = user.Gender
             };
         }
 

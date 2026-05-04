@@ -17,9 +17,9 @@ namespace Kmums.Pages.Admin
 
         public async Task<IActionResult> OnGet()
         {
-            var query =  await _context.Home.AnyAsync();
+            bool query = await _context.Home.AnyAsync();
             if (query)
-                HomeExists=true;
+                HomeExists = true;
             return Page();
         }
 

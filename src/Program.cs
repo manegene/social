@@ -1,3 +1,4 @@
+using AspNetCore.ReCaptcha;
 using Kmums.Areas.Identity.Data;
 using Kmums.CustomServices;
 using Kmums.Models;
@@ -7,14 +8,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web.UI;
-using AspNetCore.ReCaptcha;
 
-var builder = WebApplication.CreateBuilder(args);
-var config = builder.Configuration;
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+ConfigurationManager config = builder.Configuration;
 
 builder.Services.AddDbContext<DataContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("SQL-Conn"),
-        provideroptions=>provideroptions.EnableRetryOnFailure()));
+        provideroptions => provideroptions.EnableRetryOnFailure()));
 
 
 builder.Services.AddDefaultIdentity<UserModel>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -47,7 +47,8 @@ builder.Services.AddAuthorizationBuilder()
 
 builder.Services.AddRazorPages()
 .AddMicrosoftIdentityUI()
-.AddRazorPagesOptions(options => {
+.AddRazorPagesOptions(options =>
+{
     options.Conventions
     .AddAreaPageRoute("Identity", "/Account/Login", "/login")
     .AddAreaPageRoute("Identity", "/Account/Register", "/signup")
@@ -83,7 +84,7 @@ builder.Services.AddSeoTags(seoOptions =>
 
 });
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

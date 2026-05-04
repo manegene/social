@@ -17,9 +17,9 @@ namespace Kmums.Pages.Admin
         public bool CheckModel { get; set; }
         public async Task<IActionResult> OnGet()
         {
-            var notEmpty= await _context.Privacy.AnyAsync();
-            if(notEmpty)
-                CheckModel= true;
+            bool notEmpty = await _context.Privacy.AnyAsync();
+            if (notEmpty)
+                CheckModel = true;
             return Page();
         }
 

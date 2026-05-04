@@ -16,9 +16,9 @@ namespace Kmums.Pages.Admin
         public bool CheCk { get; set; }
         public async Task<IActionResult> OnGet()
         {
-            var exist = await _context.About.AnyAsync();
-            if(exist)
-                CheCk= true;
+            bool exist = await _context.About.AnyAsync();
+            if (exist)
+                CheCk = true;
             return Page();
         }
 

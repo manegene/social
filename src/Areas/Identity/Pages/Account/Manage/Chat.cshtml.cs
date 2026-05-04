@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 
 namespace Kmums.Areas.Identity.Pages.Account.Manage
 {
@@ -18,7 +17,7 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<UserModel> _userManager;
         private readonly IEmailSender _emailSender;
 
-        public ChatModel(DataContext dataContext,UserManager<UserModel> userManager, IEmailSender emailSender)
+        public ChatModel(DataContext dataContext, UserManager<UserModel> userManager, IEmailSender emailSender)
         {
             _dataContext = dataContext;
             _userManager = userManager;
@@ -28,17 +27,17 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
         public List<ContactModel> SavedChats { get; set; }
         public async Task<IActionResult> OnGetAsync()
         {
-            var user= await _userManager.GetUserAsync(User);
-            if(user != null)
+            UserModel user = await _userManager.GetUserAsync(User);
+            if (user != null)
             {
                 SavedChats = await _dataContext.ContactQueue.
-                      Where(uid => (uid.Receiver == user.Email) && (!uid.Sender.Contains("kilimanimums.ke"))).ToListAsync();  
+                      Where(uid => (uid.Receiver == user.Email) && (!uid.Sender.Contains("kilimanimums.ke"))).ToListAsync();
             }
             return Page();
         }
         [BindProperty]
         [DisplayName("reply message")]
-        [MaxLength(300,ErrorMessage ="maximum length is 300 chacters")]
+        [MaxLength(300, ErrorMessage = "maximum length is 300 chacters")]
         public string RespMsg { get; set; }
 
         [BindProperty]
@@ -58,14 +57,14 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var user = await _userManager.GetUserAsync(User);
-            var mthread = await _dataContext.ContactQueue.Where(mid => mid.Id == MsgId).FirstOrDefaultAsync();
+            UserModel user = await _userManager.GetUserAsync(User);
+            ContactModel mthread = await _dataContext.ContactQueue.Where(mid => mid.Id == MsgId).FirstOrDefaultAsync();
 
             Reply = new()
             {
-                Receiver=mthread.Sender,
-                Title=mthread.Title,
-                Body=RespMsg
+                Receiver = mthread.Sender,
+                Title = mthread.Title,
+                Body = RespMsg
 
             };
 
@@ -73,13 +72,13 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
             await _emailSender.SendEmailAsync(Reply.Receiver, Reply.Title, Reply.Body);
 
             //update the sent email send address
-            Reply.Sender=user.Email;
+            Reply.Sender = user.Email;
             Reply.Sent = DateTime.Now.ToString();
             await _dataContext.AddAsync(Reply);
             await _dataContext.SaveChangesAsync();
 
             return RedirectToPage();
-            
+
         }
     }
 }

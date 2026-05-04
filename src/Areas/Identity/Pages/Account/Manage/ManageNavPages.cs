@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Kmums.Areas.Identity.Pages.Account.Manage
@@ -97,7 +96,7 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public static string DeletePersonalDataNavClass(ViewContext viewContext) => PageNavClass(viewContext, DeletePersonalData);
         public static string PublicProfileClass(ViewContext viewContext) => PageNavClass(viewContext, PublicProfile);
-        public static string ChatProfileClass(ViewContext viewContext) => PageNavClass(viewContext,Chats);
+        public static string ChatProfileClass(ViewContext viewContext) => PageNavClass(viewContext, Chats);
         public static string SentChatProfileClass(ViewContext viewContext) => PageNavClass(viewContext, SentChats);
         public static string ImagesProfileClass(ViewContext viewContext) => PageNavClass(viewContext, PImages);
 
@@ -125,7 +124,7 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public static string PageNavClass(ViewContext viewContext, string page)
         {
-            var activePage = viewContext.ViewData["ActivePage"] as string
+            string activePage = viewContext.ViewData["ActivePage"] as string
                 ?? System.IO.Path.GetFileNameWithoutExtension(viewContext.ActionDescriptor.DisplayName);
             return string.Equals(activePage, page, StringComparison.OrdinalIgnoreCase) ? "active" : null;
         }

@@ -21,23 +21,26 @@ namespace Kmums.Pages.Admin
 
         [BindProperty]
         public CategoryModel CategoryModel { get; set; }
-        
+
         [BindProperty]
         public CategoryDTO Input { get; set; }
 
         public List<CategoryModel> ParentCategory { get; set; }
 
-       
+
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
                 return Page();
 
-            var entity = new CategoryModel
+            CategoryModel entity = new()
             {
                 Name = Input.Name,
-                ParentId = Input.ParentCategoryId
+                Id = Input.ParentCategoryId
             };
+
+            if (entity.Id != 0)
+                return Page();
 
             _context.Category.Add(entity);
             await _context.SaveChangesAsync();

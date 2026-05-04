@@ -13,7 +13,7 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<UserModel> _userManager;
         private readonly DataContext _context;
 
-        public SentChatModel(UserManager<UserModel> userManager,DataContext context)
+        public SentChatModel(UserManager<UserModel> userManager, DataContext context)
         {
             _userManager = userManager;
             _context = context;
@@ -22,7 +22,7 @@ namespace Kmums.Areas.Identity.Pages.Account.Manage
         public List<ContactModel> Messages { get; set; }
         public async Task<ActionResult> OnGetAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            UserModel user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return BadRequest();
             Messages = await _context.ContactQueue.Where(msend => msend.Sender == user.Email).ToListAsync();
